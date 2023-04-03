@@ -11,7 +11,7 @@ namespace Pokegotchi.Services
 {
     internal class PokegotchiService
     {
-        public List<Mascot> GetPokemons()
+        public List<Pokemon> GetPokemons()
         {
             var client = new RestClient("https://pokeapi.co/api/v2/pokemon?limit=20");
             var response = client.Execute(new RestRequest("", Method.Get));
@@ -19,11 +19,11 @@ namespace Pokegotchi.Services
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 JsonElement result = JsonDocument.Parse(response.Content).RootElement.GetProperty("results");
-                List<Mascot> mascots = JsonSerializer.Deserialize<List<Mascot>>(result);
-                return mascots;
+                List<Pokemon> pokemons = JsonSerializer.Deserialize<List<Pokemon>>(result);
+                return pokemons;
             }
             else Console.WriteLine(response.ErrorMessage);
-            return new List<Mascot>();
+            return new List<Pokemon>();
         }
 
         public T GetDetails<T>(string url)

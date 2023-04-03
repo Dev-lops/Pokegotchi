@@ -6,56 +6,56 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Pokegotchi.Model;
+using Pokegotchi.Controllers;
 
 namespace Pokegotchi.View
 {
     internal class PokegotchiView
     {
-        private string playerName;
 
         public void Welcome()
         {
             Console.WriteLine("Qual o seu nome?");
-            playerName = Console.ReadLine();
+            PokegotchiController.playerName = Console.ReadLine();
         }
 
         public void MainMenu()
         {
             Console.Clear();
-            Console.WriteLine($"{playerName}, o que você deseja fazer?");
+            Console.WriteLine($"{PokegotchiController.playerName}, o que você deseja fazer?");
             Console.WriteLine("1-Adotar Mascote\n2-Ver Mascotes Adotados\n0-Sair");
         }
 
-        public void SelectMascotMenu()
+        public void SelectPokemonMenu()
         {
             Console.Clear();
             Console.WriteLine("N-Selecionar Mascote 0-Voltar");
             Console.WriteLine("Mascotes:");
         }
 
-        public void MascotSelectedMenu(Mascot mascot)
+        public void PokemonSelectedMenu(Pokemon pokemon)
         {
             Console.Clear();
-            Console.WriteLine($"Você escolheu o(a) {mascot.name}, o que deseja fazer?");
+            Console.WriteLine($"Você escolheu o(a) {FirstName(pokemon.name)}, o que deseja fazer?");
             Console.WriteLine("1-Ver Detalhes\n2-Adotar\n3-Escolher Outro\n0-Voltar ao Menu Principal");
         }
 
-        public void ShowMascot(Mascot mascot)
+        public void ShowPokemon(Pokemon pokemon)
         {
-            Console.WriteLine($"Nome: {mascot.name}");
-            Console.WriteLine($"Height: {mascot.height}\nWeight: {mascot.weight}\nAbilities:");
-            foreach(var abilities in mascot.abilities)
+            Console.WriteLine($"Nome: {FirstName(pokemon.name)}");
+            Console.WriteLine($"Height: {pokemon.height}\nWeight: {pokemon.weight}\nAbilities:");
+            foreach(var abilities in pokemon.abilities)
             {
-                Console.Write(abilities.ability.name + " ");
+                Console.Write(FirstName(abilities.ability.name) + " ");
             }
             Console.ReadKey();
         }
 
-        public void ShowMascotList(List<Mascot> mascots)
+        public void ShowPokemonList(List<Pokemon> pokemons)
         {
-            for(int i = 0; i < mascots.Count; i++)
+            for(int i = 0; i < pokemons.Count; i++)
             {
-                Console.WriteLine($"{i + 1}-{mascots[i].name}");
+                Console.WriteLine($"{i + 1}-{FirstName(pokemons[i].name)}");
             }
         }
 
@@ -73,7 +73,7 @@ namespace Pokegotchi.View
 
             for(int i = 0; i < adoptedMascots.Count; i++)
             {
-                Console.WriteLine($"{i + 1}-{adoptedMascots[i].name}");
+                Console.WriteLine($"{i + 1}-{FirstName(adoptedMascots[i].name)}");
             }
         }
 
@@ -81,6 +81,11 @@ namespace Pokegotchi.View
         {
             Console.WriteLine("Valor Invalido!");
             Console.ReadKey();
+        }
+        
+        public string FirstName(string name)
+        {
+            return char.ToUpper(name[0]) + name.Substring(1);
         }
     }
 }
