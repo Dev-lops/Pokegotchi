@@ -104,6 +104,7 @@ namespace Pokegotchi.View
             Console.WriteLine($"Pokemons Restantes: {pokemonsCount}");
             Console.WriteLine($"Mascotes Perdidos: {runawayMascotsCount}");
             Console.WriteLine($"\nScore Total: {score}");
+            Console.ReadKey();
         }
 
         public string FirstName(string name)
