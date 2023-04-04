@@ -23,7 +23,7 @@ namespace Pokegotchi.Services
                 return pokemons;
             }
             else Console.WriteLine(response.ErrorMessage);
-            return new List<Pokemon>();
+            return null;
         }
 
         public T GetDetails<T>(string url)

@@ -23,8 +23,12 @@ namespace Pokegotchi.Controllers
 
             do
             {
+
+                mascots[index] = mascot;
+
                 view.MascotMenu(mascot);
 
+                
                 input = Console.ReadLine();
 
                 switch (input)
@@ -36,8 +40,6 @@ namespace Pokegotchi.Controllers
                     default: view.InputErrorMessage(); break;
                 }
             } while (input != "0");
-
-            mascots[index] = mascot;
         }
         
         private void Feed()

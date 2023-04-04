@@ -16,13 +16,13 @@ namespace Pokegotchi.View
         public void Welcome()
         {
             Console.WriteLine("Qual o seu nome?");
-            PokegotchiController.playerName = Console.ReadLine();
+            PokegotchiController.inst.playerName = Console.ReadLine();
         }
 
         public void MainMenu()
         {
             Console.Clear();
-            Console.WriteLine($"{PokegotchiController.playerName}, o que você deseja fazer?");
+            Console.WriteLine($"{PokegotchiController.inst.playerName}, o que você deseja fazer?");
             Console.WriteLine("1-Adotar Mascote\n2-Ver Mascotes Adotados\n0-Sair");
         }
 
@@ -38,6 +38,16 @@ namespace Pokegotchi.View
             Console.Clear();
             Console.WriteLine($"Você escolheu o(a) {FirstName(pokemon.name)}, o que deseja fazer?");
             Console.WriteLine("1-Ver Detalhes\n2-Adotar\n3-Escolher Outro\n0-Voltar ao Menu Principal");
+        }
+
+        public void AdoptingMessage(string name, bool success)
+        {
+            if (success)
+            {
+                Console.OutputEncoding = System.Text.Encoding.Unicode;
+                Console.WriteLine(@"(˶ᵔ ᵕ ᵔ˶)", Encoding.Unicode);
+                Console.WriteLine($"{FirstName(name)} foi adotado com sucesso!");
+            }
         }
 
         public void ShowPokemon(Pokemon pokemon)
@@ -63,6 +73,7 @@ namespace Pokegotchi.View
         {
             if(adoptedMascots.Count == 0)
             {
+                Console.Clear();
                 Console.WriteLine("Nenhum Mascote Adotado Ainda!");
                 return;
             }
@@ -77,15 +88,30 @@ namespace Pokegotchi.View
             }
         }
 
+        public void RanAwayMessage(Mascot mascot)
+        {
+            Console.Clear();
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            Console.WriteLine(@"= _ =");
+            Console.WriteLine($"{FirstName(mascot.name)} fugiu!");
+            Console.ReadKey();
+        }
+
+        public string FirstName(string name)
+        {
+            return char.ToUpper(name[0]) + name.Substring(1);
+        }
+
+        public void APIError()
+        {
+            Console.WriteLine("Ocorreu um erro no usa da API!");
+            Console.WriteLine("Tente novamente mais tarde.");
+        }
+
         public void InputErrorMessage()
         {
             Console.WriteLine("Valor Invalido!");
             Console.ReadKey();
-        }
-        
-        public string FirstName(string name)
-        {
-            return char.ToUpper(name[0]) + name.Substring(1);
         }
     }
 }

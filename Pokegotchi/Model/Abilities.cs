@@ -9,6 +9,6 @@ namespace Pokegotchi.Model
 {
     internal class Abilities
     {
-        public Ability ability { get; set; }
+        public Ability? ability { get; set; }
     }
 }

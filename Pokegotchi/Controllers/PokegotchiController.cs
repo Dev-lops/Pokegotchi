@@ -12,26 +12,40 @@ namespace Pokegotchi.Controllers
 {
     internal class PokegotchiController
     {
+        public static PokegotchiController? inst = new PokegotchiController();
+
         PokegotchiService service = new PokegotchiService();
         PokegotchiView view = new PokegotchiView();
         InteractionsController interaction = new InteractionsController();
 
-        public static string playerName;
-        List<Pokemon> Pokemons;
-        List<Mascot> adoptedMascots = new List<Mascot>();
+        private const int TIME = 2, TIME_SUBTRAHEND = 1;
+        private const int HUNGER_SUBTRAHEND = 1, MOOD_SUBTRAHEND = 1;
+
+        public string? playerName;
+        private int time = 0;
+        List<Pokemon>? pokemons;
+        private List<Mascot> adoptedMascots = new List<Mascot>();
 
         MapperConfiguration config = new MapperConfiguration(cfg => cfg.CreateMap<Pokemon, Mascot>());
         IMapper mapper => config.CreateMapper();
 
         public void Play()
         {
-            Pokemons = service.GetPokemons();
+            pokemons = service.GetPokemons();
+            if(pokemons == null)
+            {
+                view.APIError();
+                return;
+            }
 
             view.Welcome();
 
             string input = "";
             do
             {
+                CountTime();
+                
+
                 view.MainMenu();
                 input = Console.ReadLine();
 
@@ -47,25 +61,28 @@ namespace Pokegotchi.Controllers
 
         private void SelectPokemon()
         {
+            CountTime();
+
             view.SelectPokemonMenu();
-            view.ShowPokemonList(Pokemons);
+            view.ShowPokemonList(pokemons);
 
             string input = Console.ReadLine();
             int index;
 
-            if (int.TryParse(input, out index) && index > 0 && index <= Pokemons.Count)
+            if (int.TryParse(input, out index) && index > 0 && index <= pokemons.Count)
             {
-                LoadMascot(Pokemons, index - 1);
+                LoadMascot(pokemons, index - 1);
 
                 do
                 {
-                    view.PokemonSelectedMenu(Pokemons[index - 1]);
+
+                    view.PokemonSelectedMenu(pokemons[index - 1]);
                     input = Console.ReadLine();
 
                     switch (input)
                     {
-                        case "1": view.ShowPokemon(Pokemons[index - 1]); break;
-                        case "2": AdoptPokemon(Pokemons[index - 1]); break;
+                        case "1": view.ShowPokemon(pokemons[index - 1]); break;
+                        case "2": AdoptPokemon(pokemons[index - 1]); break;
                         case "3": SelectPokemon(); break;
                         case "0": break;
                         default: 
@@ -99,30 +116,36 @@ namespace Pokegotchi.Controllers
         {
             if (adoptedMascots.Exists(m => m.name == pokemon.name))
             {
-                Console.WriteLine($"{view.FirstName(pokemon.name)} já foi adotado!");
+                view.AdoptingMessage(pokemon.name, false);
             }
             else
             {
                 Mascot mascot = mapper.Map<Mascot>(pokemon);
 
                 adoptedMascots.Add(mascot);
-                Pokemons.Remove(pokemon);
+                adoptedMascotsCount++;
+                pokemons.Remove(pokemon);
 
-                Console.WriteLine($"{view.FirstName(pokemon.name)} foi adotado com sucesso!");
+                view.AdoptingMessage(pokemon.name, true);
             }
             Console.ReadKey();
         }
 
         private void MyMascot()
         {
+            string input;
+
+            CountTime();
+
             view.ShowMyMascots(adoptedMascots);
 
-            string input = Console.ReadLine();
+            input = Console.ReadLine();
             int index;
 
             if (int.TryParse(input, out index) && index > 0 && index <= adoptedMascots.Count)
             {
                 interaction.Interact(adoptedMascots, index - 1);
+                MyMascot();
             }
             else if (index == 0)
             {
@@ -133,6 +156,44 @@ namespace Pokegotchi.Controllers
                 view.InputErrorMessage();
                 MyMascot();
             }
+        }
+
+        public void CountTime()
+        {
+            time = Math.Max(time - TIME_SUBTRAHEND, 0);
+
+            int count = adoptedMascots.Count;
+
+            if(time == 0)
+            {
+                if (adoptedMascots.Count > 0) UpdateMascots();
+
+                time = TIME;
+            }
+        }
+        
+        private void UpdateMascots()
+        {
+            foreach (Mascot mascot in adoptedMascots)
+            {
+                mascot.hunger = Math.Max(0, mascot.hunger - HUNGER_SUBTRAHEND);
+                mascot.mood = Math.Max(0, mascot.mood - MOOD_SUBTRAHEND);
+
+                if (mascot.hunger == 0) mascot.tolerance = Math.Max(0, mascot.tolerance - 1);
+                if(mascot.mood == 0) mascot.tolerance = Math.Max(0, mascot.tolerance - 1);
+
+                if(mascot.tolerance == 0)
+                {
+                    MascotRunAway(mascot);
+                    break;
+                }
+            }
+        }
+
+        private void MascotRunAway(Mascot mascot)
+        {
+            adoptedMascots.Remove(mascot);
+            view.RanAwayMessage(mascot);
         }
     }
 }

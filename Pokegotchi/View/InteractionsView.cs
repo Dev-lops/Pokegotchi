@@ -13,14 +13,8 @@ namespace Pokegotchi.View
         public void MascotMenu(Mascot mascot)
         {
             Console.Clear();
-            Console.WriteLine($"{PokegotchiController.playerName}, o que você deseja fazer?");
+            Console.WriteLine($"{PokegotchiController.inst.playerName}, o que você deseja fazer?");
             Console.WriteLine($"1-Saber como {FirstName(mascot.name)} está\n2-Alimentar {FirstName(mascot.name)}\n3-Brincar com {FirstName(mascot.name)}\n0-Voltar");
-        }
-
-        public void InputErrorMessage()
-        {
-            Console.WriteLine("Valor Invalido!");
-            Console.ReadKey();
         }
 
         public void ShowStatus(Mascot mascot)
@@ -43,7 +37,24 @@ namespace Pokegotchi.View
 
             if (mascot.hunger > 7) Console.WriteLine($"Barriga cheia!");
             else if (mascot.hunger > 4) Console.WriteLine($"Fome.");
-            else Console.WriteLine($"Morto de fome!");
+            else Console.WriteLine($"Faminto!");
+
+            int media = (mascot.mood + mascot.hunger) / 2;
+            if(media > 7)
+            {
+                Console.OutputEncoding = System.Text.Encoding.Unicode;
+                Console.WriteLine(@"(ᵔ ᵕ ᵔ)", Encoding.Unicode);
+            }
+            else if( media > 4)
+            {
+                Console.OutputEncoding = System.Text.Encoding.Unicode;
+                Console.WriteLine(@"(,,> _ <,,)", Encoding.Unicode);
+            }
+            else
+            {
+                Console.OutputEncoding = System.Text.Encoding.Unicode;
+                Console.WriteLine(@"(T ^ T)", Encoding.Unicode);
+            }
 
             Console.ReadKey();
         }
@@ -51,6 +62,12 @@ namespace Pokegotchi.View
         private string FirstName(string name)
         {
             return char.ToUpper(name[0]) + name.Substring(1);
+        }
+
+        public void InputErrorMessage()
+        {
+            Console.WriteLine("Valor Invalido!");
+            Console.ReadKey();
         }
     }
 }

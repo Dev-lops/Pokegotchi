@@ -7,7 +7,6 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        PokegotchiController controller = new PokegotchiController();
-        controller.Play();
+        PokegotchiController.inst.Play();
     }
 }

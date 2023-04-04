@@ -12,7 +12,7 @@ namespace Pokegotchi.Model
         public string? url { get; set; }
         public int height { get; set; }
         public int weight { get; set; }
-        public List<Abilities> abilities { get; set; }
+        public List<Abilities>? abilities { get; set; }
         public bool loaded = false;
     }
 }
