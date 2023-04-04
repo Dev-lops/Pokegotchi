@@ -123,7 +123,6 @@ namespace Pokegotchi.Controllers
                 Mascot mascot = mapper.Map<Mascot>(pokemon);
 
                 adoptedMascots.Add(mascot);
-                adoptedMascotsCount++;
                 pokemons.Remove(pokemon);
 
                 view.AdoptingMessage(pokemon.name, true);
