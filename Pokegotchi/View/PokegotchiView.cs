@@ -96,6 +96,15 @@ namespace Pokegotchi.View
             Console.WriteLine($"{FirstName(mascot.name)} fugiu!");
             Console.ReadKey();
         }
+        public void GameOver(int mascotsCount, int pokemonsCount, int runawayMascotsCount, int score)
+        {
+            Console.Clear();
+            Console.WriteLine(FirstName(PokegotchiController.inst.playerName) + ":");
+            Console.WriteLine($"Mascotes: {mascotsCount}");
+            Console.WriteLine($"Pokemons Restantes: {pokemonsCount}");
+            Console.WriteLine($"Mascotes Perdidos: {runawayMascotsCount}");
+            Console.WriteLine($"\nScore Total: {score}");
+        }
 
         public string FirstName(string name)
         {

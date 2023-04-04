@@ -23,6 +23,8 @@ namespace Pokegotchi.Controllers
 
             do
             {
+                PokegotchiController.inst.Clock();
+                if (PokegotchiController.inst.gameOver) break;
 
                 mascots[index] = mascot;
 
@@ -33,7 +35,7 @@ namespace Pokegotchi.Controllers
 
                 switch (input)
                 {
-                    case "1": view.ShowStatus(mascot); break;
+                    case "1": view.ShowStatus(mascot, (mascot.hunger + mascot.mood) / 2); break;
                     case "2": Feed(); break;
                     case "3": Play(); break;
                     case "0": break;

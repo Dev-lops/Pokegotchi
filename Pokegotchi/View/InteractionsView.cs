@@ -17,7 +17,7 @@ namespace Pokegotchi.View
             Console.WriteLine($"1-Saber como {FirstName(mascot.name)} está\n2-Alimentar {FirstName(mascot.name)}\n3-Brincar com {FirstName(mascot.name)}\n0-Voltar");
         }
 
-        public void ShowStatus(Mascot mascot)
+        public void ShowStatus(Mascot mascot, int average)
         {
 
             Console.Clear();
@@ -39,13 +39,12 @@ namespace Pokegotchi.View
             else if (mascot.hunger > 4) Console.WriteLine($"Fome.");
             else Console.WriteLine($"Faminto!");
 
-            int media = (mascot.mood + mascot.hunger) / 2;
-            if(media > 7)
+            if(average >= 7)
             {
                 Console.OutputEncoding = System.Text.Encoding.Unicode;
                 Console.WriteLine(@"(ᵔ ᵕ ᵔ)", Encoding.Unicode);
             }
-            else if( media > 4)
+            else if(average >= 4)
             {
                 Console.OutputEncoding = System.Text.Encoding.Unicode;
                 Console.WriteLine(@"(,,> _ <,,)", Encoding.Unicode);

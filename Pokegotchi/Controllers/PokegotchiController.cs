@@ -18,11 +18,16 @@ namespace Pokegotchi.Controllers
         PokegotchiView view = new PokegotchiView();
         InteractionsController interaction = new InteractionsController();
 
-        private const int TIME = 2, TIME_SUBTRAHEND = 1;
+        private const int UPDATE_TIME = 2, TIME_SUBTRAHEND = 1, FINISH_TIME = 15;
         private const int HUNGER_SUBTRAHEND = 1, MOOD_SUBTRAHEND = 1;
 
         public string? playerName;
-        private int time = 0;
+        private int updateTimeCount = 0;
+
+        private DateTime timeCount;
+        public bool gameOver = false;
+        private int score = 0, runawayMascotsCount = 0;
+
         List<Pokemon>? pokemons;
         private List<Mascot> adoptedMascots = new List<Mascot>();
 
@@ -38,13 +43,18 @@ namespace Pokegotchi.Controllers
                 return;
             }
 
+            timeCount = DateTime.Now;
+
             view.Welcome();
 
             string input = "";
+
             do
             {
                 CountTime();
-                
+
+                Clock();
+                if (gameOver) break;
 
                 view.MainMenu();
                 input = Console.ReadLine();
@@ -57,6 +67,8 @@ namespace Pokegotchi.Controllers
                     default: view.InputErrorMessage(); break;
                 }
             } while (input != "0");
+
+            EndGame();
         }
 
         private void SelectPokemon()
@@ -132,6 +144,9 @@ namespace Pokegotchi.Controllers
 
         private void MyMascot()
         {
+            Clock();
+            if (gameOver) return;
+
             string input;
 
             CountTime();
@@ -157,17 +172,32 @@ namespace Pokegotchi.Controllers
             }
         }
 
-        public void CountTime()
+        public void Clock()
         {
-            time = Math.Max(time - TIME_SUBTRAHEND, 0);
+            TimeSpan timeSpan = timeCount.Subtract(DateTime.Now);
+            if (timeSpan.Minutes >= FINISH_TIME) gameOver = true;
+        }
+
+        private void EndGame()
+        {
+            score += adoptedMascots.Count;
+            score -= pokemons.Count;
+            score = Math.Max(0, score);
+
+            view.GameOver(adoptedMascots.Count, pokemons.Count, runawayMascotsCount, score);
+        }
+
+        private void CountTime()
+        {
+            updateTimeCount = Math.Max(updateTimeCount - TIME_SUBTRAHEND, 0);
 
             int count = adoptedMascots.Count;
 
-            if(time == 0)
+            if(updateTimeCount == 0)
             {
                 if (adoptedMascots.Count > 0) UpdateMascots();
 
-                time = TIME;
+                updateTimeCount = UPDATE_TIME;
             }
         }
         
@@ -175,6 +205,8 @@ namespace Pokegotchi.Controllers
         {
             foreach (Mascot mascot in adoptedMascots)
             {
+                CountScore(mascot.hunger, mascot.mood);
+
                 mascot.hunger = Math.Max(0, mascot.hunger - HUNGER_SUBTRAHEND);
                 mascot.mood = Math.Max(0, mascot.mood - MOOD_SUBTRAHEND);
 
@@ -189,9 +221,19 @@ namespace Pokegotchi.Controllers
             }
         }
 
+        private void CountScore(int hunger, int mood)
+        {
+            int average = (mood + hunger) / 2;
+
+            if (average >= 7) score += 2;
+            else if (average >= 4) score++;
+        }
+
         private void MascotRunAway(Mascot mascot)
         {
             adoptedMascots.Remove(mascot);
+            runawayMascotsCount++;
+
             view.RanAwayMessage(mascot);
         }
     }
